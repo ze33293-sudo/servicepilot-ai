@@ -12,7 +12,7 @@ function Get-GitHubCredential {
     $credentialInput = "protocol=https`nhost=github.com`n`n"
     $credentialLines = $credentialInput | git credential fill
     if ($LASTEXITCODE -ne 0) {
-        throw "Git Credential Manager 未返回 GitHub 凭据，请先运行 git credential-manager github login。"
+        throw "Git Credential Manager did not return a GitHub credential. Run: git credential-manager github login"
     }
 
     $credential = @{}
@@ -24,7 +24,7 @@ function Get-GitHubCredential {
     }
 
     if (-not $credential.password) {
-        throw "未找到 GitHub OAuth token，请先完成浏览器授权。"
+        throw "GitHub OAuth token was not found. Complete browser authorization first."
     }
     return $credential
 }
@@ -63,16 +63,16 @@ $currentRemote = git -c $safeDirectoryArgument remote get-url origin 2>$null
 if ($LASTEXITCODE -ne 0) {
     git -c $safeDirectoryArgument remote add origin $expectedRemote
 } elseif ($currentRemote -ne $expectedRemote) {
-    throw "origin 已指向 $currentRemote，预期为 $expectedRemote。"
+    throw "origin points to $currentRemote; expected $expectedRemote."
 }
 
 git -c $safeDirectoryArgument push -u origin main
 if ($LASTEXITCODE -ne 0) {
-    throw "Git push 失败。"
+    throw "Git push failed."
 }
 
 if (-not (Test-Path -LiteralPath $VideoAsset)) {
-    throw "找不到最终视频：$VideoAsset"
+    throw "Final video was not found: $VideoAsset"
 }
 
 $releases = Invoke-RestMethod -Uri "$repositoryUri/releases" -Headers $headers
@@ -94,7 +94,7 @@ $existingAsset = $release.assets | Where-Object { $_.name -eq $assetName } | Sel
 if (-not $existingAsset) {
     $uploadBase = $release.upload_url -replace "\{\?name,label\}$", ""
     $encodedName = [uri]::EscapeDataString($assetName)
-    Invoke-RestMethod -Method Post -Uri "$uploadBase?name=$encodedName" -Headers $headers -InFile $VideoAsset -ContentType "video/mp4" | Out-Null
+    Invoke-RestMethod -Method Post -Uri "${uploadBase}?name=$encodedName" -Headers $headers -InFile $VideoAsset -ContentType "video/mp4" | Out-Null
 }
 
 Write-Output "Repository: $($repository.html_url)"
