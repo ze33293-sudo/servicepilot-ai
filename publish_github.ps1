@@ -98,25 +98,33 @@ if (-not $existingAsset) {
     $uploadBase = $release.upload_url -replace "\{\?name,label\}$", ""
     $encodedName = [uri]::EscapeDataString($assetName)
     $uploadUri = "${uploadBase}?name=$encodedName"
-    $resolvedVideo = (Resolve-Path -LiteralPath $VideoAsset).Path.Replace("\", "/")
-    $curlConfig = @(
-        "url = `"$uploadUri`"",
-        "request = `"POST`"",
-        "header = `"Authorization: Bearer $($credential.password)`"",
-        "header = `"Accept: application/vnd.github+json`"",
-        "header = `"Content-Type: video/mp4`"",
-        "header = `"User-Agent: ServicePilot-AI-Publisher`"",
-        "data-binary = `"@$resolvedVideo`"",
-        "connect-timeout = 30",
-        "max-time = 1200",
-        "silent",
-        "show-error",
-        "fail-with-body",
-        "output = `"NUL`""
-    ) -join "`n"
-    $curlConfig | curl.exe --config -
-    if ($LASTEXITCODE -ne 0) {
-        throw "Release asset upload failed with curl exit code $LASTEXITCODE."
+    $temporaryVideo = Join-Path ([IO.Path]::GetTempPath()) ("servicepilot-ai-upload-" + [guid]::NewGuid().ToString("N") + ".mp4")
+    Copy-Item -LiteralPath $VideoAsset -Destination $temporaryVideo
+    try {
+        $resolvedVideo = $temporaryVideo.Replace("\", "/")
+        $curlConfig = @(
+            "url = `"$uploadUri`"",
+            "request = `"POST`"",
+            "header = `"Authorization: Bearer $($credential.password)`"",
+            "header = `"Accept: application/vnd.github+json`"",
+            "header = `"Content-Type: video/mp4`"",
+            "header = `"User-Agent: ServicePilot-AI-Publisher`"",
+            "data-binary = `"@$resolvedVideo`"",
+            "connect-timeout = 30",
+            "max-time = 1200",
+            "silent",
+            "show-error",
+            "fail-with-body",
+            "output = `"NUL`""
+        ) -join "`n"
+        $curlConfig | curl.exe --config -
+        if ($LASTEXITCODE -ne 0) {
+            throw "Release asset upload failed with curl exit code $LASTEXITCODE."
+        }
+    } finally {
+        if (Test-Path -LiteralPath $temporaryVideo) {
+            Remove-Item -LiteralPath $temporaryVideo -Force
+        }
     }
 }
 
