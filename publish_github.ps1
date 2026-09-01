@@ -97,7 +97,26 @@ $existingAsset = $release.assets | Where-Object { $_.name -eq $assetName } | Sel
 if (-not $existingAsset) {
     $uploadBase = $release.upload_url -replace "\{\?name,label\}$", ""
     $encodedName = [uri]::EscapeDataString($assetName)
-    Invoke-RestMethod -Method Post -Uri "${uploadBase}?name=$encodedName" -Headers $headers -InFile $VideoAsset -ContentType "video/mp4" | Out-Null
+    $uploadUri = "${uploadBase}?name=$encodedName"
+    $uploadClient = New-Object System.Net.Http.HttpClient
+    $uploadClient.Timeout = [TimeSpan]::FromMinutes(20)
+    $uploadClient.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue -ArgumentList "Bearer", $credential.password
+    $uploadClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/vnd.github+json") | Out-Null
+    $uploadClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "ServicePilot-AI-Publisher") | Out-Null
+    $fileStream = [IO.File]::OpenRead((Resolve-Path -LiteralPath $VideoAsset))
+    $streamContent = New-Object System.Net.Http.StreamContent -ArgumentList $fileStream
+    $streamContent.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue -ArgumentList "video/mp4"
+    try {
+        $uploadResponse = $uploadClient.PostAsync($uploadUri, $streamContent).GetAwaiter().GetResult()
+        if (-not $uploadResponse.IsSuccessStatusCode) {
+            $uploadError = $uploadResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult()
+            throw "Release asset upload failed: $($uploadResponse.StatusCode) $uploadError"
+        }
+    } finally {
+        $streamContent.Dispose()
+        $fileStream.Dispose()
+        $uploadClient.Dispose()
+    }
 }
 
 Write-Output "Repository: $($repository.html_url)"
