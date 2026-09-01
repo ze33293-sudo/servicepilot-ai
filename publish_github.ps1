@@ -98,25 +98,25 @@ if (-not $existingAsset) {
     $uploadBase = $release.upload_url -replace "\{\?name,label\}$", ""
     $encodedName = [uri]::EscapeDataString($assetName)
     $uploadUri = "${uploadBase}?name=$encodedName"
-    Add-Type -AssemblyName System.Net.Http
-    $uploadClient = New-Object System.Net.Http.HttpClient
-    $uploadClient.Timeout = [TimeSpan]::FromMinutes(20)
-    $uploadClient.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue -ArgumentList "Bearer", $credential.password
-    $uploadClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "application/vnd.github+json") | Out-Null
-    $uploadClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "ServicePilot-AI-Publisher") | Out-Null
-    $fileStream = [IO.File]::OpenRead((Resolve-Path -LiteralPath $VideoAsset))
-    $streamContent = New-Object System.Net.Http.StreamContent -ArgumentList $fileStream
-    $streamContent.Headers.ContentType = New-Object System.Net.Http.Headers.MediaTypeHeaderValue -ArgumentList "video/mp4"
-    try {
-        $uploadResponse = $uploadClient.PostAsync($uploadUri, $streamContent).GetAwaiter().GetResult()
-        if (-not $uploadResponse.IsSuccessStatusCode) {
-            $uploadError = $uploadResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult()
-            throw "Release asset upload failed: $($uploadResponse.StatusCode) $uploadError"
-        }
-    } finally {
-        $streamContent.Dispose()
-        $fileStream.Dispose()
-        $uploadClient.Dispose()
+    $resolvedVideo = (Resolve-Path -LiteralPath $VideoAsset).Path.Replace("\", "/")
+    $curlConfig = @(
+        "url = `"$uploadUri`"",
+        "request = `"POST`"",
+        "header = `"Authorization: Bearer $($credential.password)`"",
+        "header = `"Accept: application/vnd.github+json`"",
+        "header = `"Content-Type: video/mp4`"",
+        "header = `"User-Agent: ServicePilot-AI-Publisher`"",
+        "data-binary = `"@$resolvedVideo`"",
+        "connect-timeout = 30",
+        "max-time = 1200",
+        "silent",
+        "show-error",
+        "fail-with-body",
+        "output = `"NUL`""
+    ) -join "`n"
+    $curlConfig | curl.exe --config -
+    if ($LASTEXITCODE -ne 0) {
+        throw "Release asset upload failed with curl exit code $LASTEXITCODE."
     }
 }
 
