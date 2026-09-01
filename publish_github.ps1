@@ -98,6 +98,7 @@ if (-not $existingAsset) {
     $uploadBase = $release.upload_url -replace "\{\?name,label\}$", ""
     $encodedName = [uri]::EscapeDataString($assetName)
     $uploadUri = "${uploadBase}?name=$encodedName"
+    Add-Type -AssemblyName System.Net.Http
     $uploadClient = New-Object System.Net.Http.HttpClient
     $uploadClient.Timeout = [TimeSpan]::FromMinutes(20)
     $uploadClient.DefaultRequestHeaders.Authorization = New-Object System.Net.Http.Headers.AuthenticationHeaderValue -ArgumentList "Bearer", $credential.password
