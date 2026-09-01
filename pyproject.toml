@@ -1,0 +1,9 @@
+[project]
+name = "servicepilot-ai"
+version = "1.0.0"
+description = "Local-first enterprise support ticket agent demo"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

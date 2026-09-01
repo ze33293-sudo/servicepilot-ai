@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ServicePilot AI 企业售后工单智能体本地演示">
+  <title>ServicePilot AI · 企业售后工单智能体</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231e40af'/%3E%3Cpath d='M8 9h12a5 5 0 0 1 0 10h-5l-4 4v-4H8a4 4 0 0 1-4-4v-2a4 4 0 0 1 4-4Z' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#workspace" aria-label="ServicePilot AI 首页">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" role="img"><path d="M8 10.5h15.5a8.5 8.5 0 0 1 0 17H17l-6 5v-5H8a6 6 0 0 1-6-6v-5a6 6 0 0 1 6-6Z"/><path d="M12 17h13M12 22h8"/></svg>
+        </span>
+        <span><strong>ServicePilot</strong><small>AI SUPPORT OPS</small></span>
+      </a>
+      <div class="system-pill" id="system-status" role="status" aria-live="polite">
+        <span class="status-dot"></span>正在连接本地服务
+      </div>
+    </header>
+
+    <nav class="view-tabs" aria-label="主要功能" role="tablist">
+      <button type="button" role="tab" aria-selected="true" aria-controls="workspace-view" id="workspace-tab" data-view="workspace">
+        智能受理
+      </button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="queue-view" id="queue-tab" data-view="queue">
+        工单队列 <span class="count-badge" id="queue-count">0</span>
+      </button>
+      <button type="button" role="tab" aria-selected="false" aria-controls="insights-view" id="insights-tab" data-view="insights">
+        评测与 ROI
+      </button>
+    </nav>
+
+    <main id="main-content">
+      <section class="kpi-grid" aria-label="运行指标">
+        <article class="kpi-card">
+          <span>累计工单</span><strong id="metric-total">0</strong><small>本地演示数据</small>
+        </article>
+        <article class="kpi-card">
+          <span>平均置信度</span><strong id="metric-confidence">—</strong><small>分类结果</small>
+        </article>
+        <article class="kpi-card">
+          <span>转人工率</span><strong id="metric-handoff">—</strong><small>安全兜底</small>
+        </article>
+        <article class="kpi-card accent-card">
+          <span>评测通过</span><strong id="metric-eval">—</strong><small>40 条固定案例</small>
+        </article>
+      </section>
+
+      <section id="workspace-view" class="view-panel" role="tabpanel" aria-labelledby="workspace-tab">
+        <div class="workspace-grid">
+          <article class="panel intake-panel" data-testid="intake-panel">
+            <div class="panel-heading">
+              <div><span class="eyebrow">TICKET INTAKE</span><h1>把问题交给 Agent 预处理</h1></div>
+              <span class="local-badge">本地运行</span>
+            </div>
+            <p class="panel-intro">自动完成分类、优先级、信息抽取、知识检索和工单创建；高风险场景不会自动闭环。</p>
+
+            <div class="error-summary" id="error-summary" role="alert" tabindex="-1" hidden>
+              <h2>提交前请修正以下问题</h2>
+              <ul id="error-list"></ul>
+            </div>
+
+            <form id="ticket-form" novalidate>
+              <div class="field">
+                <label for="subject">工单主题 <span aria-hidden="true">*</span></label>
+                <input id="subject" name="subject" autocomplete="off" maxlength="100" aria-describedby="subject-hint subject-error" required>
+                <small id="subject-hint">用一句话概括客户问题。</small>
+                <p class="field-error" id="subject-error"></p>
+              </div>
+              <div class="field">
+                <label for="description">问题描述 <span aria-hidden="true">*</span></label>
+                <textarea id="description" name="description" rows="7" maxlength="2000" aria-describedby="description-hint description-error" required></textarea>
+                <small id="description-hint">可包含订单号、型号、时间与客户诉求；联系方式会在入库前脱敏。</small>
+                <p class="field-error" id="description-error"></p>
+              </div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="channel">来源渠道</label>
+                  <select id="channel" name="channel">
+                    <option value="web">官网</option>
+                    <option value="phone">电话</option>
+                    <option value="store">门店</option>
+                    <option value="social">社交媒体</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="customer-tier">客户等级</label>
+                  <select id="customer-tier" name="customer_tier">
+                    <option value="standard">标准客户</option>
+                    <option value="vip">VIP 客户</option>
+                    <option value="enterprise">企业客户</option>
+                  </select>
+                </div>
+              </div>
+              <label class="check-row" for="simulate-failure">
+                <input id="simulate-failure" name="simulate_tool_failure" type="checkbox">
+                <span><strong>模拟工单 API 失败</strong><small>用于演示两次重试后自动转人工。</small></span>
+              </label>
+              <div class="sample-row" aria-label="示例数据">
+                <span>载入示例：</span>
+                <button type="button" class="text-button" data-sample="refund">退款</button>
+                <button type="button" class="text-button" data-sample="rag">设备故障</button>
+                <button type="button" class="text-button" data-sample="sensitive">敏感问题</button>
+              </div>
+              <button class="primary-button" id="submit-button" type="submit">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+                <span>运行 Agent 并创建工单</span>
+              </button>
+            </form>
+          </article>
+
+          <article class="panel result-panel" data-testid="result-panel" aria-live="polite">
+            <div class="panel-heading compact">
+              <div><span class="eyebrow">AGENT OUTPUT</span><h2>处理结果</h2></div>
+              <span id="result-route" class="route-badge neutral">等待提交</span>
+            </div>
+            <div id="result-content" class="empty-result">
+              <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 8h28l8 8v40H14z"/><path d="M42 8v10h8M22 28h20M22 36h16M22 44h12"/></svg>
+              <h3>结果将在这里展开</h3>
+              <p>提交后可查看分类、引用、工具轨迹与转人工原因。</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="queue-view" class="view-panel" role="tabpanel" aria-labelledby="queue-tab" hidden>
+        <article class="panel">
+          <div class="panel-heading">
+            <div><span class="eyebrow">TICKET OPERATIONS</span><h1>工单队列</h1></div>
+            <button type="button" class="secondary-button" id="refresh-tickets">刷新队列</button>
+          </div>
+          <div class="filter-row">
+            <label for="status-filter">状态</label>
+            <select id="status-filter"><option value="">全部状态</option><option value="triaged">已分诊</option><option value="awaiting_human">待人工</option><option value="in_progress">处理中</option><option value="resolved">已解决</option></select>
+            <label for="category-filter">分类</label>
+            <select id="category-filter"><option value="">全部分类</option><option value="refund_return">退款退货</option><option value="logistics">物流配送</option><option value="device_issue">设备故障</option><option value="account_activation">账号激活</option><option value="payment_invoice">支付发票</option><option value="complaint_feedback">投诉建议</option></select>
+          </div>
+          <div class="table-wrap" tabindex="0" aria-label="可横向滚动的工单表格">
+            <table>
+              <thead><tr><th>工单</th><th>分类 / 优先级</th><th>状态</th><th>置信度</th><th>更新时间</th><th>操作</th></tr></thead>
+              <tbody id="ticket-table-body"><tr><td colspan="6" class="table-empty">暂无工单</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section id="insights-view" class="view-panel" role="tabpanel" aria-labelledby="insights-tab" hidden>
+        <div class="insight-grid">
+          <article class="panel evaluation-panel" data-testid="evaluation-panel">
+            <div class="panel-heading"><div><span class="eyebrow">EVALUATION</span><h1>40 条固定评测</h1></div><span class="pass-badge" id="evaluation-status">读取中</span></div>
+            <div id="evaluation-metrics" class="metric-list"></div>
+            <div class="comparison" id="comparison-card">
+              <h2>错误结果 → 优化结果</h2>
+              <p>正在读取对比报告……</p>
+            </div>
+          </article>
+          <article class="panel roi-panel" data-testid="roi-panel">
+            <div class="panel-heading compact"><div><span class="eyebrow">ROI SIMULATOR</span><h2>业务价值模拟</h2></div><span class="assumption-badge">模拟假设</span></div>
+            <div class="roi-output">
+              <div><span>每月节省</span><strong id="roi-hours">—</strong><small>小时</small></div>
+              <div><span>人工成本改善</span><strong id="roi-cost">—</strong><small>元 / 月</small></div>
+              <div><span>一次解决率</span><strong id="roi-fcr">—</strong><small>百分点</small></div>
+            </div>
+            <form id="roi-form" class="roi-form">
+              <label>月工单量<input type="number" name="monthly_tickets" value="1000" min="0"></label>
+              <label>原处理时长（分钟）<input type="number" name="baseline_minutes" value="8" min="0" step="0.1"></label>
+              <label>自动处理率（%）<input type="number" name="automation_rate" value="55" min="0" max="100"></label>
+              <label>自动处理时长<input type="number" name="automated_minutes" value="1.5" min="0" step="0.1"></label>
+              <label>人工复核时长<input type="number" name="review_minutes" value="3" min="0" step="0.1"></label>
+              <label>人工时薪（元）<input type="number" name="hourly_cost" value="60" min="0"></label>
+            </form>
+            <p class="disclaimer">该计算器用于展示方法，不代表真实生产收益。</p>
+          </article>
+        </div>
+      </section>
+    </main>
+    <footer><span>ServicePilot AI · 本地优先的售后工单智能体</span><span>虚构演示数据 · v1.0.0</span></footer>
+  </div>
+  <script src="/app.js" defer></script>
+</body>
+</html>

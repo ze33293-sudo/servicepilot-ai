@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.venv/
+data/*.db
+data/*.db-*
+data/*.log
+video/node_modules/
+video/out/
+video/.cache/
+.DS_Store
+Thumbs.db

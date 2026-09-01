@@ -1,0 +1,47 @@
+{
+  "status": "completed",
+  "case_count": 40,
+  "metrics": {
+    "classification_accuracy": 1.0,
+    "priority_accuracy": 1.0,
+    "extraction_f1": 1.0,
+    "citation_hit_rate": 1.0,
+    "handoff_recall": 1.0,
+    "handoff_precision": 1.0,
+    "normal_tool_success_rate": 1.0
+  },
+  "baseline": {
+    "classification_accuracy": 0.9
+  },
+  "before_after": {
+    "case_id": "E031",
+    "input": "不是物流问题：不是物流问题，而是订单 ORD-20260831011 的退款一直没到账。",
+    "before": {
+      "category": "logistics",
+      "label": "物流配送",
+      "citation_ids": [
+        "KB-REF-001",
+        "KB-LOG-001",
+        "KB-ACC-001"
+      ]
+    },
+    "after": {
+      "category": "refund_return",
+      "label": "退款退货",
+      "citation_ids": [
+        "KB-REF-001",
+        "KB-REF-002"
+      ]
+    },
+    "optimization": "加入否定/转折权重，并用预测类别重排知识片段。"
+  },
+  "bad_cases": [],
+  "thresholds": {
+    "classification_accuracy": 0.9,
+    "priority_accuracy": 0.9,
+    "extraction_f1": 0.9,
+    "citation_hit_rate": 0.9,
+    "handoff_recall": 1.0
+  },
+  "passed": true
+}
