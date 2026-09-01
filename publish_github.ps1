@@ -69,8 +69,19 @@ if ($remotes -notcontains "origin") {
     }
 }
 
-git -c $safeDirectoryArgument push -u origin main
-if ($LASTEXITCODE -ne 0) {
+$pushSucceeded = $false
+for ($attempt = 1; $attempt -le 4; $attempt++) {
+    git -c $safeDirectoryArgument -c http.version=HTTP/1.1 push -u origin main
+    if ($LASTEXITCODE -eq 0) {
+        $pushSucceeded = $true
+        break
+    }
+    if ($attempt -lt 4) {
+        Write-Warning "Git push attempt $attempt failed; retrying."
+        Start-Sleep -Seconds (3 * $attempt)
+    }
+}
+if (-not $pushSucceeded) {
     throw "Git push failed."
 }
 
