@@ -5,6 +5,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$repositoryRoot = (Get-Location).Path.Replace("\", "/")
+$safeDirectoryArgument = "safe.directory=$repositoryRoot"
 
 function Get-GitHubCredential {
     $credentialInput = "protocol=https`nhost=github.com`n`n"
@@ -57,14 +59,14 @@ try {
 }
 
 $expectedRemote = $repository.clone_url
-$currentRemote = git remote get-url origin 2>$null
+$currentRemote = git -c $safeDirectoryArgument remote get-url origin 2>$null
 if ($LASTEXITCODE -ne 0) {
-    git remote add origin $expectedRemote
+    git -c $safeDirectoryArgument remote add origin $expectedRemote
 } elseif ($currentRemote -ne $expectedRemote) {
     throw "origin 已指向 $currentRemote，预期为 $expectedRemote。"
 }
 
-git push -u origin main
+git -c $safeDirectoryArgument push -u origin main
 if ($LASTEXITCODE -ne 0) {
     throw "Git push 失败。"
 }
