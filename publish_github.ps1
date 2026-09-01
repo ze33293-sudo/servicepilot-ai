@@ -59,11 +59,14 @@ try {
 }
 
 $expectedRemote = $repository.clone_url
-$currentRemote = git -c $safeDirectoryArgument remote get-url origin 2>$null
-if ($LASTEXITCODE -ne 0) {
+$remotes = @(git -c $safeDirectoryArgument remote)
+if ($remotes -notcontains "origin") {
     git -c $safeDirectoryArgument remote add origin $expectedRemote
-} elseif ($currentRemote -ne $expectedRemote) {
-    throw "origin points to $currentRemote; expected $expectedRemote."
+} else {
+    $currentRemote = git -c $safeDirectoryArgument remote get-url origin
+    if ($currentRemote -ne $expectedRemote) {
+        throw "origin points to $currentRemote; expected $expectedRemote."
+    }
 }
 
 git -c $safeDirectoryArgument push -u origin main
