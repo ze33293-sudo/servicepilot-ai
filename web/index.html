@@ -12,7 +12,7 @@
   <a class="skip-link" href="#main-content">跳到主要内容</a>
   <div class="app-shell">
     <header class="topbar">
-      <a class="brand" href="#workspace" aria-label="ServicePilot AI 首页">
+      <a class="brand" href="#workspace-view" aria-label="ServicePilot AI 首页">
         <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 40 40" role="img"><path d="M8 10.5h15.5a8.5 8.5 0 0 1 0 17H17l-6 5v-5H8a6 6 0 0 1-6-6v-5a6 6 0 0 1 6-6Z"/><path d="M12 17h13M12 22h8"/></svg>
         </span>
@@ -36,18 +36,18 @@
     </nav>
 
     <main id="main-content">
-      <section class="kpi-grid" aria-label="运行指标">
+      <section class="kpi-grid" id="operations-kpis" aria-label="运营指标">
         <article class="kpi-card">
           <span>累计工单</span><strong id="metric-total">0</strong><small>本地演示数据</small>
         </article>
+        <article class="kpi-card attention-card">
+          <span>待人工</span><strong id="metric-awaiting-human">0</strong><small>需要接管</small>
+        </article>
+        <article class="kpi-card">
+          <span>自动处理率</span><strong id="metric-automation">—</strong><small>未转人工工单</small>
+        </article>
         <article class="kpi-card">
           <span>平均置信度</span><strong id="metric-confidence">—</strong><small>分类结果</small>
-        </article>
-        <article class="kpi-card">
-          <span>转人工率</span><strong id="metric-handoff">—</strong><small>安全兜底</small>
-        </article>
-        <article class="kpi-card accent-card">
-          <span>评测通过</span><strong id="metric-eval">—</strong><small>40 条固定案例</small>
         </article>
       </section>
 
@@ -55,7 +55,7 @@
         <div class="workspace-grid">
           <article class="panel intake-panel" data-testid="intake-panel">
             <div class="panel-heading">
-              <div><span class="eyebrow">TICKET INTAKE</span><h1>把问题交给 Agent 预处理</h1></div>
+              <div><h1>把问题交给 Agent 预处理</h1></div>
               <span class="local-badge">本地运行</span>
             </div>
             <p class="panel-intro">自动完成分类、优先级、信息抽取、知识检索和工单创建；高风险场景不会自动闭环。</p>
@@ -116,7 +116,7 @@
 
           <article class="panel result-panel" data-testid="result-panel" aria-live="polite">
             <div class="panel-heading compact">
-              <div><span class="eyebrow">AGENT OUTPUT</span><h2>处理结果</h2></div>
+              <div><h2>处理结果</h2></div>
               <span id="result-route" class="route-badge neutral">等待提交</span>
             </div>
             <div id="result-content" class="empty-result">
@@ -131,7 +131,7 @@
       <section id="queue-view" class="view-panel" role="tabpanel" aria-labelledby="queue-tab" hidden>
         <article class="panel">
           <div class="panel-heading">
-            <div><span class="eyebrow">TICKET OPERATIONS</span><h1>工单队列</h1></div>
+            <div><h1>工单队列</h1></div>
             <button type="button" class="secondary-button" id="refresh-tickets">刷新队列</button>
           </div>
           <div class="filter-row">
@@ -152,7 +152,7 @@
       <section id="insights-view" class="view-panel" role="tabpanel" aria-labelledby="insights-tab" hidden>
         <div class="insight-grid">
           <article class="panel evaluation-panel" data-testid="evaluation-panel">
-            <div class="panel-heading"><div><span class="eyebrow">EVALUATION</span><h1>40 条固定评测</h1></div><span class="pass-badge" id="evaluation-status">读取中</span></div>
+            <div class="panel-heading"><div><h1>40 条固定评测</h1></div><span class="pass-badge" id="evaluation-status">读取中</span></div>
             <div id="evaluation-metrics" class="metric-list"></div>
             <div class="comparison" id="comparison-card">
               <h2>错误结果 → 优化结果</h2>
@@ -160,7 +160,7 @@
             </div>
           </article>
           <article class="panel roi-panel" data-testid="roi-panel">
-            <div class="panel-heading compact"><div><span class="eyebrow">ROI SIMULATOR</span><h2>业务价值模拟</h2></div><span class="assumption-badge">模拟假设</span></div>
+            <div class="panel-heading compact"><div><h2>业务价值模拟</h2></div><span class="assumption-badge">模拟假设</span></div>
             <div class="roi-output">
               <div><span>每月节省</span><strong id="roi-hours">—</strong><small>小时</small></div>
               <div><span>人工成本改善</span><strong id="roi-cost">—</strong><small>元 / 月</small></div>

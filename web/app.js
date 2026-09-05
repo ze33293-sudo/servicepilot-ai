@@ -31,7 +31,12 @@ async function api(path, options = {}) {
     headers: { "Content-Type": "application/json", ...(options.headers || {}) },
   });
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(payload?.error?.message || `请求失败（${response.status}）`);
+  if (!response.ok) {
+    const error = new Error(payload?.error?.message || `请求失败（${response.status}）`);
+    error.status = response.status;
+    error.code = payload?.error?.code || "REQUEST_FAILED";
+    throw error;
+  }
   return payload;
 }
 
@@ -39,10 +44,26 @@ function switchView(view) {
   qsa("[data-view]").forEach((button) => {
     const active = button.dataset.view === view;
     button.setAttribute("aria-selected", String(active));
+    button.tabIndex = active ? 0 : -1;
   });
   qsa(".view-panel").forEach((panel) => { panel.hidden = panel.id !== `${view}-view`; });
+  qs("#operations-kpis").hidden = view === "insights";
   if (view === "queue") loadTickets();
   if (view === "insights") loadEvaluation();
+}
+
+function handleTabKeydown(event) {
+  const tabs = qsa('.view-tabs [role="tab"]');
+  const currentIndex = tabs.indexOf(event.currentTarget);
+  let nextIndex;
+  if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % tabs.length;
+  else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+  else if (event.key === "Home") nextIndex = 0;
+  else if (event.key === "End") nextIndex = tabs.length - 1;
+  else return;
+  event.preventDefault();
+  switchView(tabs[nextIndex].dataset.view);
+  tabs[nextIndex].focus();
 }
 
 function validateForm() {
@@ -66,6 +87,31 @@ function validateForm() {
   }
   summary.hidden = true;
   return true;
+}
+
+function renderResultLoading() {
+  const panel = qs(".result-panel");
+  const route = qs("#result-route");
+  panel.setAttribute("aria-busy", "true");
+  route.textContent = "处理中";
+  route.className = "route-badge neutral";
+  qs("#result-content").className = "result-loading";
+  qs("#result-content").innerHTML = `
+    <div class="loading-copy">
+      <strong>Agent 正在分析工单</strong>
+      <span>正在分类、检索知识并准备工具调用。</span>
+    </div>
+    <div class="loading-banner skeleton" aria-hidden="true"></div>
+    <div class="loading-summary" aria-hidden="true"><span class="skeleton"></span><span class="skeleton"></span><span class="skeleton"></span></div>
+    <div class="loading-block skeleton" aria-hidden="true"></div>
+    <div class="loading-block short skeleton" aria-hidden="true"></div>`;
+}
+
+function renderResultFailure(error) {
+  qs("#result-route").textContent = "处理失败";
+  qs("#result-route").className = "route-badge human";
+  qs("#result-content").className = "decision-banner human";
+  qs("#result-content").innerHTML = `<strong>无法完成处理</strong><p>${escapeHtml(error.message)} 请确认本地服务正常后再次运行。</p>`;
 }
 
 function renderResult(result) {
@@ -97,10 +143,16 @@ function renderResult(result) {
       <div class="summary-cell"><span>置信度</span><strong>${percent(analysis.confidence)}</strong></div>
     </div>
     ${ticket ? `<div class="result-section"><h3>工单已创建</h3><div class="source-code">${escapeHtml(ticket.id)} · ${escapeHtml(STATUS_LABELS[ticket.status] || ticket.status)} · v${escapeHtml(ticket.version)}</div></div>` : ""}
-    <div class="result-section"><h3>信息抽取</h3><div class="extracted-list">${extracted}</div></div>
     <div class="result-section"><h3>知识库回答</h3><div class="answer-box"><p>${escapeHtml(answer.text)}</p></div></div>
     <div class="result-section"><h3>引用来源</h3><div class="citation-list">${citations}</div></div>
-    <div class="result-section"><h3>Agent 工具轨迹</h3><div class="trace-list">${traceHtml}</div></div>`;
+    <details class="result-disclosure">
+      <summary><span>信息抽取</span><small>${Object.keys(analysis.extracted).length} 个字段</small></summary>
+      <div class="disclosure-body"><div class="extracted-list">${extracted}</div></div>
+    </details>
+    <details class="result-disclosure">
+      <summary><span>Agent 工具轨迹</span><small>${trace.length} 个步骤</small></summary>
+      <div class="disclosure-body"><div class="trace-list">${traceHtml}</div></div>
+    </details>`;
 }
 
 async function submitTicket(event) {
@@ -110,6 +162,7 @@ async function submitTicket(event) {
   button.disabled = true;
   button.setAttribute("aria-busy", "true");
   button.querySelector("span").textContent = "Agent 正在处理…";
+  renderResultLoading();
   try {
     const payload = {
       subject: qs("#subject").value.trim(), description: qs("#description").value.trim(),
@@ -121,11 +174,9 @@ async function submitTicket(event) {
     renderResult(result);
     await Promise.all([loadMetrics(), loadTickets(false)]);
   } catch (error) {
-    qs("#result-route").textContent = "处理失败";
-    qs("#result-route").className = "route-badge human";
-    qs("#result-content").className = "decision-banner human";
-    qs("#result-content").innerHTML = `<strong>无法完成处理</strong><p>${escapeHtml(error.message)} 请检查服务后重试。</p>`;
+    renderResultFailure(error);
   } finally {
+    qs(".result-panel").removeAttribute("aria-busy");
     button.disabled = false;
     button.removeAttribute("aria-busy");
     button.querySelector("span").textContent = "运行 Agent 并创建工单";
@@ -134,12 +185,13 @@ async function submitTicket(event) {
 
 function ticketRow(ticket) {
   const options = Object.entries(STATUS_LABELS).map(([value, label]) => `<option value="${value}" ${ticket.status === value ? "selected" : ""}>${label}</option>`).join("");
-  return `<tr data-ticket-id="${escapeHtml(ticket.id)}" data-version="${ticket.version}">
+  const feedbackId = `status-feedback-${ticket.id}`;
+  return `<tr data-ticket-id="${escapeHtml(ticket.id)}" data-version="${ticket.version}" data-current-status="${escapeHtml(ticket.status)}">
     <td><span class="ticket-id">${escapeHtml(ticket.id)}</span><span class="ticket-subject" title="${escapeHtml(ticket.subject)}">${escapeHtml(ticket.subject)}</span></td>
     <td>${escapeHtml(ticket.category_label)} <strong class="priority-${escapeHtml(ticket.priority)}">${escapeHtml(ticket.priority)}</strong></td>
-    <td><select class="ticket-status" aria-label="更新 ${escapeHtml(ticket.id)} 状态">${options}</select></td>
+    <td><select class="ticket-status" aria-label="更新 ${escapeHtml(ticket.id)} 状态" aria-describedby="${escapeHtml(feedbackId)}">${options}</select></td>
     <td>${percent(ticket.category_confidence)}</td><td>${escapeHtml(ticket.updated_at.replace("T", " ").replace("+00:00", " UTC"))}</td>
-    <td><button type="button" class="row-action">保存状态</button></td>
+    <td><div class="row-update"><button type="button" class="row-action" aria-label="保存 ${escapeHtml(ticket.id)} 状态" aria-describedby="${escapeHtml(feedbackId)}">保存状态</button><span class="row-feedback" id="${escapeHtml(feedbackId)}" role="status"></span></div></td>
   </tr>`;
 }
 
@@ -159,19 +211,35 @@ async function loadTickets(showError = true) {
 
 async function updateTicket(button) {
   const row = button.closest("tr");
+  const select = qs(".ticket-status", row);
+  const feedback = qs(".row-feedback", row);
+  const previousStatus = row.dataset.currentStatus;
   button.disabled = true;
+  button.setAttribute("aria-busy", "true");
+  select.disabled = true;
+  feedback.className = "row-feedback saving";
+  feedback.textContent = "正在保存";
   try {
     const payload = await api(`/api/tickets/${encodeURIComponent(row.dataset.ticketId)}`, {
       method: "PATCH",
-      body: JSON.stringify({ status: qs(".ticket-status", row).value, version: Number(row.dataset.version) }),
+      body: JSON.stringify({ status: select.value, version: Number(row.dataset.version) }),
     });
     row.dataset.version = String(payload.ticket.version);
-    button.textContent = "已保存";
+    row.dataset.currentStatus = payload.ticket.status;
+    select.value = payload.ticket.status;
+    feedback.className = "row-feedback success";
+    feedback.textContent = "状态已保存";
     await loadMetrics();
   } catch (error) {
-    button.textContent = error.message;
+    select.value = previousStatus;
+    feedback.className = "row-feedback error";
+    feedback.textContent = error.code === "VERSION_CONFLICT"
+      ? `${error.message} 当前选择已恢复。`
+      : `${error.message} 当前选择已恢复，请重试。`;
   } finally {
-    setTimeout(() => { button.disabled = false; button.textContent = "保存状态"; }, 1300);
+    select.disabled = false;
+    button.disabled = false;
+    button.removeAttribute("aria-busy");
   }
 }
 
@@ -188,7 +256,7 @@ function renderEvaluation(report) {
   const comparison = report.before_after;
   qs("#comparison-card").innerHTML = `<h2>错误结果 → 优化结果</h2><p>${escapeHtml(comparison.input)}</p>
     <div class="comparison-grid"><div class="comparison-state before"><span>Baseline</span><strong>${escapeHtml(comparison.before.label)}</strong><small>${escapeHtml(comparison.before.citation_ids.join(" · "))}</small></div>
-    <div class="comparison-arrow" aria-hidden="true">→</div>
+    <div class="comparison-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></svg></div>
     <div class="comparison-state after"><span>Optimized</span><strong>${escapeHtml(comparison.after.label)}</strong><small>${escapeHtml(comparison.after.citation_ids.join(" · "))}</small></div></div>
     <p class="disclaimer">${escapeHtml(comparison.optimization)} 当前剩余 Bad Case：${report.bad_cases.length} 条。</p>`;
 }
@@ -215,14 +283,21 @@ function updateRoi() {
 async function loadMetrics() {
   try {
     const payload = await api("/api/metrics");
-    qs("#metric-total").textContent = String(payload.operations.total_tickets);
-    qs("#metric-confidence").textContent = percent(payload.operations.average_confidence);
-    qs("#metric-handoff").textContent = percent(payload.operations.handoff_rate);
+    const operations = payload.operations;
+    qs("#metric-total").textContent = String(operations.total_tickets);
+    qs("#metric-awaiting-human").textContent = String(operations.by_status?.awaiting_human || 0);
+    qs("#metric-automation").textContent = percent(Math.max(0, 1 - operations.handoff_rate));
+    qs("#metric-confidence").textContent = percent(operations.average_confidence);
   } catch { /* health status communicates the problem */ }
 }
 
 async function initialize() {
-  qsa("[data-view]").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
+  qsa("[data-view]").forEach((button) => {
+    button.tabIndex = button.getAttribute("aria-selected") === "true" ? 0 : -1;
+    button.addEventListener("click", () => switchView(button.dataset.view));
+    button.addEventListener("keydown", handleTabKeydown);
+  });
+  qs(".brand").addEventListener("click", () => switchView("workspace"));
   qs("#ticket-form").addEventListener("submit", submitTicket);
   qsa("[data-sample]").forEach((button) => button.addEventListener("click", () => {
     const sample = SAMPLES[button.dataset.sample];
@@ -239,6 +314,12 @@ async function initialize() {
   qs("#status-filter").addEventListener("change", () => loadTickets());
   qs("#category-filter").addEventListener("change", () => loadTickets());
   qs("#ticket-table-body").addEventListener("click", (event) => { if (event.target.matches(".row-action")) updateTicket(event.target); });
+  qs("#ticket-table-body").addEventListener("change", (event) => {
+    if (!event.target.matches(".ticket-status")) return;
+    const feedback = qs(".row-feedback", event.target.closest("tr"));
+    feedback.className = "row-feedback";
+    feedback.textContent = "";
+  });
   qs("#roi-form").addEventListener("input", updateRoi);
   updateRoi();
   try {
@@ -250,7 +331,6 @@ async function initialize() {
     const status = qs("#system-status"); status.className = "system-pill error"; status.innerHTML = `<span class="status-dot"></span>本地服务未连接`;
   }
   await Promise.all([loadMetrics(), loadTickets(false), loadEvaluation()]);
-  qs("#metric-eval").textContent = qs("#evaluation-status").textContent.includes("通过") ? "40 / 40" : "待检查";
 }
 
 document.addEventListener("DOMContentLoaded", initialize);

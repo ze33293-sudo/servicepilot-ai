@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-05T05:15:08.5128001Z",
+  "title": "Design System: ServicePilot AI",
+  "extensions": {
+    "colorMeta": {
+      "commander-blue": {
+        "role": "primary",
+        "displayName": "指挥蓝",
+        "canonical": "#1e40af",
+        "tonalRamp": ["#172f86", "#1e40af", "#2563eb", "#3b82f6", "#7e94b1", "#b9c7db", "#c8d7f0", "#eef4ff"]
+      },
+      "commander-blue-deep": {
+        "role": "primary",
+        "displayName": "深舱蓝",
+        "canonical": "#172f86",
+        "tonalRamp": ["oklch(15% 0.12 263)", "oklch(27% 0.12 263)", "oklch(39% 0.12 263)", "oklch(51% 0.12 263)", "oklch(63% 0.11 263)", "oklch(75% 0.09 263)", "oklch(86% 0.05 263)", "oklch(95% 0.02 263)"]
+      },
+      "signal-blue": {
+        "role": "primary",
+        "displayName": "信号蓝",
+        "canonical": "#3b82f6",
+        "tonalRamp": ["#172f86", "#1e40af", "#2563eb", "#3b82f6", "#7e94b1", "#b9c7db", "#dbeafe", "#f3f7ff"]
+      },
+      "focus-blue": {
+        "role": "primary",
+        "displayName": "焦点蓝",
+        "canonical": "#2563eb",
+        "tonalRamp": ["oklch(15% 0.17 258)", "oklch(27% 0.17 258)", "oklch(39% 0.17 258)", "oklch(51% 0.17 258)", "oklch(63% 0.15 258)", "oklch(75% 0.11 258)", "oklch(86% 0.06 258)", "oklch(95% 0.03 258)"]
+      },
+      "handoff-amber": {
+        "role": "secondary",
+        "displayName": "接管琥珀",
+        "canonical": "#b45309",
+        "tonalRamp": ["#9a4d00", "#b45309", "#d97706", "rgba(217, 119, 6, .13)", "#f0cfaa", "#fff8ed", "#fffaf3", "oklch(98% 0.01 65)"]
+      },
+      "warning-amber-deep": {
+        "role": "secondary",
+        "displayName": "深预警琥珀",
+        "canonical": "#9a4d00",
+        "tonalRamp": ["oklch(15% 0.13 60)", "oklch(27% 0.13 60)", "oklch(39% 0.13 60)", "oklch(51% 0.13 60)", "oklch(63% 0.11 60)", "oklch(75% 0.09 60)", "oklch(86% 0.05 60)", "oklch(95% 0.02 60)"]
+      },
+      "closure-green": {
+        "role": "tertiary",
+        "displayName": "闭环绿",
+        "canonical": "#087a55",
+        "tonalRamp": ["#087a55", "oklch(45% 0.11 165)", "rgba(8, 122, 85, .13)", "#addacb", "#b8e2d3", "#effcf7", "#f0fdf8", "oklch(98% 0.01 165)"]
+      },
+      "escalation-red": {
+        "role": "tertiary",
+        "displayName": "升级红",
+        "canonical": "#b42318",
+        "tonalRamp": ["#b42318", "rgba(180, 35, 24, .12)", "rgba(180, 35, 24, .11)", "#efb4ad", "oklch(86% 0.05 25)", "#fff5f4", "#fff7f6", "oklch(98% 0.01 25)"]
+      },
+      "cool-mist": {
+        "role": "neutral",
+        "displayName": "冷雾背景",
+        "canonical": "#f5f7fb",
+        "tonalRamp": ["#132143", "#3d4d66", "#526078", "#7e94b1", "#9aaac0", "#b9c7db", "#d8e2f1", "#f5f7fb"]
+      },
+      "work-surface": {
+        "role": "neutral",
+        "displayName": "白色工作面",
+        "canonical": "#ffffff",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(27% 0 0)", "oklch(39% 0 0)", "oklch(51% 0 0)", "oklch(63% 0 0)", "oklch(75% 0 0)", "oklch(86% 0 0)", "oklch(100% 0 0)"]
+      },
+      "work-surface-soft": {
+        "role": "neutral",
+        "displayName": "柔白工作面",
+        "canonical": "#f8fafc",
+        "tonalRamp": ["#132143", "#526078", "#9aaac0", "#d8e2f1", "#e9eef6", "#edf2f8", "#eef4ff", "#f8fafc"]
+      },
+      "deep-ink": {
+        "role": "neutral",
+        "displayName": "深墨文本",
+        "canonical": "#132143",
+        "tonalRamp": ["oklch(15% 0.055 265)", "oklch(27% 0.055 265)", "oklch(39% 0.05 265)", "oklch(51% 0.045 265)", "oklch(63% 0.04 265)", "oklch(75% 0.03 265)", "oklch(86% 0.018 265)", "oklch(95% 0.008 265)"]
+      },
+      "muted-slate": {
+        "role": "neutral",
+        "displayName": "静默石板",
+        "canonical": "#526078",
+        "tonalRamp": ["oklch(15% 0.035 255)", "oklch(27% 0.035 255)", "oklch(39% 0.035 255)", "oklch(51% 0.032 255)", "oklch(63% 0.028 255)", "oklch(75% 0.022 255)", "oklch(86% 0.014 255)", "oklch(95% 0.006 255)"]
+      },
+      "cool-border": {
+        "role": "neutral",
+        "displayName": "冷灰边界",
+        "canonical": "#d8e2f1",
+        "tonalRamp": ["#132143", "#3d4d66", "#526078", "#7e94b1", "#9aaac0", "#b9c7db", "#c8d7f0", "#d8e2f1"]
+      }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "任务标题", "purpose": "页面与主要操作任务的标题。" },
+      "title": { "displayName": "面板标题", "purpose": "结果、队列、评测与 ROI 面板标题。" },
+      "body": { "displayName": "运营正文", "purpose": "表单、说明和知识回答的主要阅读字体。" },
+      "label": { "displayName": "字段标签", "purpose": "字段名、状态说明和紧凑元数据。" },
+      "control": { "displayName": "控件文本", "purpose": "表单字段名、紧凑操作和结果回答。" },
+      "metadata": { "displayName": "辅助元数据", "purpose": "来源、说明与次级状态。" },
+      "caption": { "displayName": "紧凑注释", "purpose": "空间受限的字段说明和指标单位。" },
+      "comparison-title": { "displayName": "对比标题", "purpose": "优化前后对比模块的标题。" },
+      "metric-compact": { "displayName": "移动指标", "purpose": "小屏上的主要运营指标。" },
+      "data": { "displayName": "审计数据", "purpose": "工单 ID、指标、来源代码与工具轨迹。" }
+    },
+    "shadows": [
+      { "name": "panel-low", "value": "0 1px 2px rgba(15, 23, 42, .06)", "purpose": "静态面板、指标卡与已选导航的轻度分离。" },
+      { "name": "brand-ambient", "value": "0 10px 24px rgba(30, 64, 175, .08)", "purpose": "品牌标记的柔和环境影。" },
+      { "name": "primary-action", "value": "0 8px 18px rgba(30, 64, 175, .18)", "purpose": "当前最重要主操作的抬升；禁用时移除。" }
+    ],
+    "motion": [
+      { "name": "state-fast", "value": "180ms ease", "purpose": "表格行悬停等轻量状态反馈。" },
+      { "name": "state-standard", "value": "200ms ease", "purpose": "按钮、输入、标签与折叠箭头的状态变化。" },
+      { "name": "skeleton-sweep", "value": "1400ms ease-in-out", "purpose": "仅在加载状态显示的水平扫光。" },
+      { "name": "reduced-motion", "value": "0.01ms", "purpose": "用户偏好减少动画时近乎关闭过渡与动画。" }
+    ],
+    "breakpoints": [
+      { "name": "compact-navigation", "value": "360px" },
+      { "name": "mobile", "value": "640px" },
+      { "name": "single-column", "value": "900px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "每个操作区域唯一的高优先级动作。",
+      "html": "<button class=\"ds-btn-primary\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg><span>运行 Agent 并创建工单</span></button>",
+      "css": ".ds-btn-primary { width: 100%; min-height: 46px; display: flex; justify-content: center; align-items: center; gap: 8px; border: 1px solid var(--primary); border-radius: 9px; padding: 10px 16px; background: var(--primary); color: white; box-shadow: 0 8px 18px rgba(30,64,175,.18); font: 750 16px/1.55 var(--font-body); transition: background .2s ease, box-shadow .2s ease, opacity .2s ease; } .ds-btn-primary svg { width: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; } .ds-btn-primary:hover { background: var(--primary-strong); } .ds-btn-primary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; } .ds-btn-primary:disabled { cursor: wait; opacity: .65; box-shadow: none; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "刷新、更新等不会取代主任务的次级动作。",
+      "html": "<button class=\"ds-btn-secondary\">刷新队列</button>",
+      "css": ".ds-btn-secondary { min-height: 46px; border: 1px solid var(--primary); border-radius: 9px; padding: 10px 16px; background: white; color: var(--primary); font: 750 16px/1.55 var(--font-body); transition: background .2s ease; } .ds-btn-secondary:hover { background: #eef4ff; } .ds-btn-secondary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "text-field",
+      "description": "安静、稳定且具备完整键盘焦点与错误状态的输入控件。",
+      "html": "<label class=\"ds-field\"><span>工单主题</span><input value=\"退款未到账\" aria-label=\"工单主题\"></label>",
+      "css": ".ds-field { display: grid; gap: 6px; color: var(--text); font: 750 14px/1.4 var(--font-body); } .ds-field input { min-height: 44px; border: 1px solid #b9c7db; border-radius: 9px; background: white; color: var(--text); padding: 10px 12px; font: 400 16px/1.55 var(--font-body); transition: border-color .2s ease, box-shadow .2s ease; } .ds-field input:hover { border-color: #7e94b1; } .ds-field input:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; } .ds-field input[aria-invalid=\"true\"] { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(180,35,24,.11); }"
+    },
+    {
+      "name": "Workspace Navigation",
+      "kind": "nav",
+      "refersTo": "tab-active",
+      "description": "在智能受理、工单队列与评测之间切换的紧凑标签导航。",
+      "html": "<nav class=\"ds-tabs\"><button aria-selected=\"true\">智能受理</button><button aria-selected=\"false\">工单队列 <span>16</span></button><button aria-selected=\"false\">评测与 ROI</button></nav>",
+      "css": ".ds-tabs { display: flex; gap: 6px; padding: 6px; border: 1px solid var(--border); border-radius: 12px; background: #e9eef6; } .ds-tabs button { min-height: 44px; border: 0; border-radius: 8px; padding: 8px 18px; background: transparent; color: #3d4d66; font: 700 16px/1.55 var(--font-body); transition: background .2s ease, color .2s ease, box-shadow .2s ease; } .ds-tabs button:hover { background: rgba(255,255,255,.65); } .ds-tabs button[aria-selected=\"true\"] { background: var(--surface); color: var(--primary); box-shadow: var(--shadow-sm); } .ds-tabs button:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; } .ds-tabs span { margin-left: 5px; border-radius: 999px; background: #dbeafe; padding: 1px 6px; font-size: 12px; }"
+    },
+    {
+      "name": "System Status Chip",
+      "kind": "chip",
+      "refersTo": "status-chip",
+      "description": "用一个圆点和短语传达本地服务的实时状态。",
+      "html": "<span class=\"ds-status ds-ready\"><span class=\"ds-status-dot\"></span>本地服务正常 · 确定性降级模式</span>",
+      "css": ".ds-status { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--muted); padding: 7px 11px; font: 650 13px/1.55 var(--font-body); white-space: nowrap; } .ds-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #d97706; box-shadow: 0 0 0 4px rgba(217,119,6,.13); } .ds-ready .ds-status-dot { background: var(--success); box-shadow: 0 0 0 4px rgba(8,122,85,.13); }"
+    },
+    {
+      "name": "Operational Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "表单、结果、队列和评测共用的主要白色工作面。",
+      "html": "<section class=\"ds-panel\"><h2>处理结果</h2><p>分类、回答与引用在同一工作面内按证据层级展开。</p></section>",
+      "css": ".ds-panel { border: 1px solid var(--border); border-radius: 14px; background: var(--surface); color: var(--text); box-shadow: var(--shadow-sm); padding: 20px; font-family: var(--font-body); } .ds-panel h2 { margin: 0 0 8px; font-size: 20px; line-height: 1.25; } .ds-panel p { margin: 0; color: var(--muted); line-height: 1.55; }"
+    },
+    {
+      "name": "Decision Banner",
+      "kind": "custom",
+      "description": "在结果顶部明确显示自动处理或人工接管及其原因。",
+      "html": "<div class=\"ds-decision ds-human\"><strong>需要人工接管</strong><p>检测到敏感问题，已保留审计证据。</p></div>",
+      "css": ".ds-decision { border: 1px solid #addacb; border-radius: 10px; background: #effcf7; padding: 12px 14px; color: var(--text); font-family: var(--font-body); } .ds-decision.ds-human { border-color: #efb4ad; background: #fff5f4; } .ds-decision strong { display: block; margin-bottom: 3px; } .ds-decision p { margin: 0; color: var(--muted); font-size: 13px; }"
+    },
+    {
+      "name": "Evidence Disclosure",
+      "kind": "custom",
+      "description": "默认收起次级审计详情，同时保留键盘可访问的完整证据。",
+      "html": "<details class=\"ds-disclosure\"><summary><span>Agent 工具轨迹</span><small>5 个步骤</small></summary><div class=\"ds-disclosure-body\">classify · extract · retrieve · route · tool.create</div></details>",
+      "css": ".ds-disclosure { border-top: 1px solid var(--border); color: var(--text); font-family: var(--font-body); } .ds-disclosure summary { min-height: 44px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 750; } .ds-disclosure summary small { margin-left: auto; color: var(--muted); font-size: 12px; font-weight: 600; } .ds-disclosure summary::after { content: \"\"; width: 10px; height: 10px; margin-left: 5px; flex: 0 0 auto; background: var(--primary); clip-path: polygon(20% 8%, 80% 50%, 20% 92%); transform: rotate(90deg); transition: transform .2s ease; } .ds-disclosure[open] summary::after { transform: rotate(-90deg); } .ds-disclosure summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; } .ds-disclosure-body { padding: 0 0 12px; color: var(--muted); font: 12px/1.5 var(--font-code); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "可信赖的运营驾驶舱",
+    "overview": "ServicePilot AI 是一套克制、可信、清晰且数据密集的运营界面。它像一张始终可核验的工单控制台：主要动作明确，状态信号稳定，业务证据与操作轨迹能被快速扫描，不用视觉噱头替代信息层级。\n\n视觉系统以冷雾背景、白色工作面和深墨文本建立安静基底，以指挥蓝组织操作焦点，并让接管琥珀、闭环绿和升级红只承担真实状态含义。界面明确拒绝消费级聊天气泡、霓虹科幻感、营销式渐变和装饰性玻璃效果。",
+    "keyCharacteristics": [
+      "高密度但不拥挤的双栏运营布局。",
+      "由语义色、清晰边界和可审计数据组成的可信反馈。",
+      "中文界面字体负责阅读，等宽字体只标记证据与数据。",
+      "桌面端并置操作与结果，移动端按任务顺序纵向展开。"
+    ],
+    "rules": [
+      { "name": "信号纪律", "body": "指挥蓝承担主操作和已选状态；接管琥珀、闭环绿、升级红只表达业务语义，不作为大面积装饰。", "section": "colors" },
+      { "name": "数据即证据", "body": "等宽字体只用于品牌字标、工单 ID、指标、来源代码与工具轨迹；普通说明和操作文本始终使用界面正文字体。", "section": "typography" },
+      { "name": "桌面并置，移动顺序", "body": "宽屏让输入与反馈同时可见；窄屏不压缩内容，而是保持任务顺序和完整信息宽度。", "section": "layout" },
+      { "name": "边界先于阴影", "body": "先用背景差和 1px 冷灰边框建立层次；阴影只用于品牌标记、基础面板和主操作的轻度抬升。", "section": "elevation" },
+      { "name": "状态不装饰", "body": "胶囊、横幅和语义色必须对应真实运行状态、风险或审核结果；没有状态含义时使用中性色。", "section": "components" }
+    ],
+    "dos": [
+      "Do 在每个操作区域只保留一个指挥蓝主动作。",
+      "Do 让分类、优先级、引用和工具结果以可扫描、可审计的结构呈现。",
+      "Do 使用冷灰边界和表面色组织密集信息，再按需增加浅影。",
+      "Do 在 900px 和 640px 断点保持任务顺序、44px 触控目标与完整内容宽度。",
+      "Do 为成功、预警、危险和人工接管保留稳定且互斥的语义颜色。"
+    ],
+    "donts": [
+      "Don't 使用消费级聊天气泡承载企业工单工作流。",
+      "Don't 使用霓虹科幻、营销式渐变或装饰性玻璃效果暗示 AI 能力。",
+      "Don't 把等宽字体扩展到普通说明、长正文或表单标签。",
+      "Don't 用胶囊包裹普通容器，或用厚重彩色侧边装饰常规卡片。",
+      "Don't 为了桌面密度而在移动端压缩、截断或隐藏关键业务证据。"
+    ]
+  }
+}
