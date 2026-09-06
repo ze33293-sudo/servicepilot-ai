@@ -68,13 +68,13 @@
             <form id="ticket-form" novalidate>
               <div class="field">
                 <label for="subject">工单主题 <span aria-hidden="true">*</span></label>
-                <input id="subject" name="subject" autocomplete="off" maxlength="100" aria-describedby="subject-hint subject-error" required>
+                <input id="subject" name="subject" autocomplete="off" maxlength="100" placeholder="例如：不是物流问题，是退款未到账" aria-describedby="subject-hint subject-error" required>
                 <small id="subject-hint">用一句话概括客户问题。</small>
                 <p class="field-error" id="subject-error"></p>
               </div>
               <div class="field">
                 <label for="description">问题描述 <span aria-hidden="true">*</span></label>
-                <textarea id="description" name="description" rows="7" maxlength="2000" aria-describedby="description-hint description-error" required></textarea>
+                <textarea id="description" name="description" rows="7" maxlength="2000" placeholder="例如：订单 ORD-20260831011 的退款一直没到账，金额 399 元。" aria-describedby="description-hint description-error" required></textarea>
                 <small id="description-hint">可包含订单号、型号、时间与客户诉求；联系方式会在入库前脱敏。</small>
                 <p class="field-error" id="description-error"></p>
               </div>

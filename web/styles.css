@@ -29,6 +29,7 @@ body { margin: 0; min-width: 320px; background: var(--background); color: var(--
 ::-webkit-scrollbar-thumb { border: 3px solid var(--background); border-radius: 999px; background: var(--muted); }
 button, input, textarea, select { font: inherit; }
 input, textarea { caret-color: var(--primary); }
+input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; font-weight: 400; }
 button, select, label[for], summary { cursor: pointer; }
 button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, summary:focus-visible, a:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .skip-link { position: fixed; left: 16px; top: -80px; z-index: 20; padding: 10px 16px; background: var(--text); color: #fff; border-radius: 8px; }
