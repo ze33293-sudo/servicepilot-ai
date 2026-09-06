@@ -23,6 +23,7 @@ const SAMPLES = {
 const qs = (selector, scope = document) => scope.querySelector(selector);
 const qsa = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[char]));
+const IS_LOCAL = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
 const percent = (value) => Number.isFinite(Number(value)) ? `${Math.round(Number(value) * 100)}%` : "—";
 
 async function api(path, options = {}) {
@@ -292,6 +293,7 @@ async function loadMetrics() {
 }
 
 async function initialize() {
+  qs("#environment-badge").textContent = IS_LOCAL ? "本地运行" : "在线演示";
   qsa("[data-view]").forEach((button) => {
     button.tabIndex = button.getAttribute("aria-selected") === "true" ? 0 : -1;
     button.addEventListener("click", () => switchView(button.dataset.view));
@@ -326,9 +328,9 @@ async function initialize() {
     const health = await api("/api/health");
     const status = qs("#system-status");
     status.className = "system-pill ready";
-    status.innerHTML = `<span class="status-dot"></span>本地服务正常 · ${health.ollama_available ? "Ollama 已连接" : "确定性降级模式"}`;
+    status.innerHTML = `<span class="status-dot"></span>${IS_LOCAL ? "本地" : "在线"}服务正常 · ${health.ollama_available ? "Ollama 已连接" : "确定性降级模式"}`;
   } catch {
-    const status = qs("#system-status"); status.className = "system-pill error"; status.innerHTML = `<span class="status-dot"></span>本地服务未连接`;
+    const status = qs("#system-status"); status.className = "system-pill error"; status.innerHTML = `<span class="status-dot"></span>${IS_LOCAL ? "本地" : "在线"}服务未连接`;
   }
   await Promise.all([loadMetrics(), loadTickets(false), loadEvaluation()]);
 }

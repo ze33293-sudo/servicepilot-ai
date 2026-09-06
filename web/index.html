@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="ServicePilot AI 企业售后工单智能体本地演示">
+  <meta name="description" content="ServicePilot AI 企业售后工单智能体演示">
   <title>ServicePilot AI · 企业售后工单智能体</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%231e40af'/%3E%3Cpath d='M8 9h12a5 5 0 0 1 0 10h-5l-4 4v-4H8a4 4 0 0 1-4-4v-2a4 4 0 0 1 4-4Z' fill='none' stroke='white' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="/styles.css">
@@ -19,7 +19,7 @@
         <span><strong>ServicePilot</strong><small>AI SUPPORT OPS</small></span>
       </a>
       <div class="system-pill" id="system-status" role="status" aria-live="polite">
-        <span class="status-dot"></span>正在连接本地服务
+        <span class="status-dot"></span>正在连接服务
       </div>
     </header>
 
@@ -38,7 +38,7 @@
     <main id="main-content">
       <section class="kpi-grid" id="operations-kpis" aria-label="运营指标">
         <article class="kpi-card">
-          <span>累计工单</span><strong id="metric-total">0</strong><small>本地演示数据</small>
+          <span>累计工单</span><strong id="metric-total">0</strong><small>虚构演示数据</small>
         </article>
         <article class="kpi-card attention-card">
           <span>待人工</span><strong id="metric-awaiting-human">0</strong><small>需要接管</small>
@@ -56,7 +56,7 @@
           <article class="panel intake-panel" data-testid="intake-panel">
             <div class="panel-heading">
               <div><h1>把问题交给 Agent 预处理</h1></div>
-              <span class="local-badge">本地运行</span>
+              <span class="local-badge" id="environment-badge">演示环境</span>
             </div>
             <p class="panel-intro">自动完成分类、优先级、信息抽取、知识检索和工单创建；高风险场景不会自动闭环。</p>
 

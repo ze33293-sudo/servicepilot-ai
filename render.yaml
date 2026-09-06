@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: servicepilot-ai
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    envVars:
+      - key: SERVICEPILOT_HOST
+        value: 0.0.0.0
+      - key: ENABLE_OLLAMA
+        value: "0"
+      - key: OLLAMA_NO_CLOUD
+        value: "1"

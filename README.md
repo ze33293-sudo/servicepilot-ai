@@ -45,6 +45,12 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1 -EnableOllama
 
 Ollama 只负责基于已检索片段重写回答；引用 ID 必须通过允许列表校验，模型不能绕过分类、优先级或转人工规则。
 
+## 在线发布
+
+仓库根目录包含 `render.yaml`，可在 Render 中作为 Blueprint 部署。默认使用新加坡区域、免费 Web Service、Docker 运行时和 `/api/health` 健康检查，不启用 Ollama。
+
+免费实例适合作品集演示，但闲置后会休眠，且 SQLite 工单会在服务休眠、重启或重新部署后重置。公开环境只能填写虚构数据，不能处理真实客户信息。
+
 ## 一键验收
 
 ```powershell

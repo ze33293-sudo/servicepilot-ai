@@ -18,7 +18,7 @@ from ticket_store import DEFAULT_DATABASE_PATH, TicketStore
 
 APP_VERSION = "1.0.0"
 DEFAULT_HOST = os.getenv("SERVICEPILOT_HOST", "127.0.0.1")
-DEFAULT_PORT = int(os.getenv("SERVICEPILOT_PORT", "8770"))
+DEFAULT_PORT = int(os.getenv("SERVICEPILOT_PORT") or os.getenv("PORT", "8770"))
 MAX_REQUEST_BYTES = 1_000_000
 ROOT = Path(__file__).parent
 WEB_ROOT = ROOT / "web"

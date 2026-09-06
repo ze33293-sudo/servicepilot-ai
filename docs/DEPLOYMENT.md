@@ -36,6 +36,15 @@ powershell -ExecutionPolicy Bypass -File .\start.ps1 -EnableOllama
 docker compose up --build
 ```
 
+## Render 在线演示
+
+1. 将仓库推送到 GitHub。
+2. 在 Render Dashboard 选择 **New → Blueprint**，连接仓库并读取根目录的 `render.yaml`。
+3. 审核名称、区域与 Free 方案后创建服务。
+4. 部署完成后访问 Render 分配的 `onrender.com` 地址，并确认 `/api/health` 返回 `status: ok`。
+
+Blueprint 使用 Dockerfile 启动服务，监听 `0.0.0.0:$PORT`，关闭 Ollama，并设置 `/api/health` 健康检查。免费实例的文件系统是临时的：SQLite 工单在休眠、重启或重新部署后可能重置，仅适合使用虚构数据的作品集演示。
+
 Compose 默认不启用 Ollama，绑定 `127.0.0.1:8770` 并把 SQLite 文件保存在命名卷中。若需连接宿主机 Ollama，可设置：
 
 ```powershell
